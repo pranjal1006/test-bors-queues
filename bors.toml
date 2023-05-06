@@ -1,0 +1,8 @@
+[try]
+required_approvals = 1
+
+[merge]
+method = "rebase"
+require_statuses = ["ci/circleci: build"]
+required_approvals = 2
+reviewers_by_code_owners = true
