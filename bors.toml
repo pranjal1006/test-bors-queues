@@ -1,3 +1,5 @@
+status = ["Sample"]
+
 [try]
 required_approvals = 0
 

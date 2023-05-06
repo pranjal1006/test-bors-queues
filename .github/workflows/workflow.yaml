@@ -9,5 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Create file to store failure logs link
+      - name: Sample
         run: echo "Hi"
