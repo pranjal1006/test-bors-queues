@@ -1,8 +1,10 @@
 [try]
-required_approvals = 1
+required_approvals = 0
 
 [merge]
 method = "rebase"
 require_statuses = ["ci/circleci: build"]
 required_approvals = 2
-reviewers_by_code_owners = true
+use_codeowners = true
+# reviewers_by_code_owners = true
+# timeout_sec = 10

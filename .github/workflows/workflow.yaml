@@ -1,0 +1,13 @@
+name: Test
+
+on: 
+  push:
+    branches: [staging, trying]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create file to store failure logs link
+        run: echo "Hi"
