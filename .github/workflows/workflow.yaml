@@ -9,21 +9,29 @@ jobs:
   check-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Check commit message
+        id: check_commit
+        run: |
+          commit_message=$(git log -1 --pretty=format:%s ${{ github.sha }})
+          if [[ $commit_message == trigger-deploy* ]]; then
+            echo "::set-output name=should_deploy::true"
+          else
+            echo "::set-output name=should_deploy::false"
+          fi
+
       - name: Checkout repository
+        if: steps.check_commit.outputs.should_deploy == 'true'
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.DEPLOY_USER_TOKEN }}
 
-      - name: Get commit message
-        id: get_commit_message
-        run: echo "::set-output name=commit_message::$(git log --format=%B -n 1 ${{ github.sha }})"
-
       - name: Set branch name
+        if: steps.check_commit.outputs.should_deploy == 'true'
         id: set_branch
         run: echo "::set-output name=branch_name::${GITHUB_REF#refs/heads/}"
 
-      - name: Check commit message and deploy
-        if: startsWith(steps.get_commit_message.outputs.commit_message, 'trigger-deploy')
+      - name: Deploy
+        if: steps.check_commit.outputs.should_deploy == 'true'
         run: |
           echo "Commit message starts with 'trigger-deploy'. Proceeding with deployment."
           echo "Current branch: ${{ steps.set_branch.outputs.branch_name }}"
@@ -35,9 +43,3 @@ jobs:
           # Create and push empty commit
           git commit --allow-empty -m "Deployment triggered from ${{ steps.set_branch.outputs.branch_name }}"
           git push origin ${{ steps.set_branch.outputs.branch_name }}
-          
-          # Add your deployment steps here
-          # For example:
-          # - Build your project
-          # - Run tests
-          # - Deploy to your server
