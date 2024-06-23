@@ -29,8 +29,8 @@ jobs:
           echo "Current branch: ${{ steps.set_branch.outputs.branch_name }}"
           
           # Configure Git
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
+          git config user.name "Pranjal Gupta"
+          git config user.email "pranjalakg@gmail.com"
           
           # Create and push empty commit
           git commit --allow-empty -m "Deployment triggered from ${{ steps.set_branch.outputs.branch_name }}"
