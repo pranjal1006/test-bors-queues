@@ -1,13 +1,43 @@
-name: Test
+name: Conditional Deploy
 
-on: 
+on:
   push:
-    branches: [staging, trying]
+    branches:
+      - '*'
 
 jobs:
-  test:
+  check-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Sample
-        run: echo "Hi"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Get commit message
+        id: get_commit_message
+        run: echo "::set-output name=commit_message::$(git log --format=%B -n 1 ${{ github.sha }})"
+
+      - name: Set branch name
+        id: set_branch
+        run: echo "::set-output name=branch_name::${GITHUB_REF#refs/heads/}"
+
+      - name: Check commit message and deploy
+        if: startsWith(steps.get_commit_message.outputs.commit_message, 'trigger-deploy')
+        run: |
+          echo "Commit message starts with 'trigger-deploy'. Proceeding with deployment."
+          echo "Current branch: ${{ steps.set_branch.outputs.branch_name }}"
+          
+          # Configure Git
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          # Create and push empty commit
+          git commit --allow-empty -m "Deployment triggered from ${{ steps.set_branch.outputs.branch_name }}"
+          git push origin ${{ steps.set_branch.outputs.branch_name }}
+          
+          # Add your deployment steps here
+          # For example:
+          # - Build your project
+          # - Run tests
+          # - Deploy to your server
