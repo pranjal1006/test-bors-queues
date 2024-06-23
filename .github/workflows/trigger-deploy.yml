@@ -1,29 +1,23 @@
-name: Trigger Deploy
+name: Create Empty Commit
 
 on:
-  push:
-    branches:
-      - main  # Adjust this to the branch you want to monitor
+  workflow_dispatch:
 
 jobs:
-  trigger-deploy:
+  create-empty-commit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          token: ${{ secrets.DEPLOY_USER_TOKEN }}
 
-      - name: Check commit message and create empty commit
-        env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOY_USER_TOKEN }}
+      - name: Configure Git
         run: |
-          COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
-          if [[ $COMMIT_MESSAGE == trigger-deploy:* ]]; then
-            git config user.name "Pranjal Gupta"
-            git config user.email "pranjalakg@gmail.com"
-            git commit --allow-empty -m "Empty commit to trigger deploy"
-            git push
-          else
-            echo "Commit message does not start with 'trigger-deploy:'. Skipping empty commit."
-          fi
+          git config user.name "Pranjal Gupta"
+          git config user.email "pranjalakg@gmail.com"
+
+      - name: Create and push empty commit
+        run: |
+          git commit --allow-empty -m "Empty commit"
+          git push
