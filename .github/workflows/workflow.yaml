@@ -9,6 +9,12 @@ jobs:
   check-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        if: steps.check_commit.outputs.should_deploy == 'true'
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DEPLOY_USER_TOKEN }}
+
       - name: Check commit message
         id: check_commit
         run: |
@@ -18,12 +24,6 @@ jobs:
           else
             echo "::set-output name=should_deploy::false"
           fi
-
-      - name: Checkout repository
-        if: steps.check_commit.outputs.should_deploy == 'true'
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.DEPLOY_USER_TOKEN }}
 
       - name: Set branch name
         if: steps.check_commit.outputs.should_deploy == 'true'
