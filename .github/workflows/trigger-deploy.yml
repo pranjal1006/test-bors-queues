@@ -20,8 +20,8 @@ jobs:
         run: |
           COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
           if [[ $COMMIT_MESSAGE == trigger-deploy:* ]]; then
-            git config user.name "Deploy Bot"
-            git config user.email "deploy-bot@example.com"
+            git config user.name "Pranjal Gupta"
+            git config user.email "pranjalakg@gmail.com"
             git commit --allow-empty -m "Empty commit to trigger deploy"
             git push
           else
